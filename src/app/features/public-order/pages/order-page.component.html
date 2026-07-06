@@ -2,26 +2,189 @@
   <section class="hero">
     <div class="hero__content">
       <p class="hero__eyebrow">PicobelloGo</p>
-      <h1 class="hero__title">Professional order intake for a modern textile cleaning service.</h1>
+      <h1 class="hero__title">Book textile cleaning pickup in one clear flow.</h1>
       <p class="hero__description">
-        The project foundation is ready for the public order flow, including routing,
-        feature-based structure, and a secure path toward full-stack expansion.
+        Select garments, review live pricing, enter your contact details, and choose
+        a pickup date. This frontend step models the MVP order process before backend
+        persistence and notifications are added.
       </p>
-
-      <ul class="hero__highlights" aria-label="Project highlights">
-        @for (highlight of highlights; track highlight) {
-          <li>{{ highlight }}</li>
-        }
-      </ul>
     </div>
 
     <aside class="status-card" aria-label="Current delivery scope">
       <p class="status-card__label">Current step</p>
-      <h2>Frontend architecture setup</h2>
-      <p>
-        The MVP domains are prepared without prematurely implementing backend,
-        database, or admin functionality.
-      </p>
+      <h2>Public MVP order flow</h2>
+      <p>Reactive Forms, client-side validation, responsive layout, and live order totals are now prepared.</p>
     </aside>
   </section>
+
+  <form class="order-layout" [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+    <section class="panel" aria-labelledby="services-heading">
+      <div class="section-heading">
+        <p class="section-heading__eyebrow">Step 1</p>
+        <h2 id="services-heading">Choose service items</h2>
+      </div>
+
+      <div class="service-list" formArrayName="items">
+        @for (itemControl of itemControls; track trackByItemId($index); let index = $index) {
+          <div class="service-card" [formGroupName]="index">
+            <div class="service-card__copy">
+              <h3>{{ getServiceItem(index).name }}</h3>
+              <p>{{ getServiceItem(index).description }}</p>
+              <div class="service-card__meta">
+                <span>{{ getServiceItem(index).price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+                <span>{{ getServiceItem(index).unitLabel }}</span>
+              </div>
+            </div>
+
+            <label class="field field--compact">
+              <span class="field__label">Quantity</span>
+              <input
+                type="number"
+                min="0"
+                max="25"
+                inputmode="numeric"
+                formControlName="quantity"
+              />
+            </label>
+          </div>
+        }
+      </div>
+
+      @if (shouldShowItemSelectionError()) {
+        <p class="field-error">Select at least one item with a quantity greater than zero.</p>
+      }
+    </section>
+
+    <section class="panel" aria-labelledby="details-heading">
+      <div class="section-heading">
+        <p class="section-heading__eyebrow">Step 2</p>
+        <h2 id="details-heading">Enter customer details</h2>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span class="field__label">First name</span>
+          <input type="text" formControlName="firstName" autocomplete="given-name" />
+          @if (shouldShowFieldError('firstName')) {
+            <span class="field-error">First name is required and must contain at least 2 characters.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Last name</span>
+          <input type="text" formControlName="lastName" autocomplete="family-name" />
+          @if (shouldShowFieldError('lastName')) {
+            <span class="field-error">Last name is required and must contain at least 2 characters.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Phone number</span>
+          <input type="tel" formControlName="phone" autocomplete="tel" placeholder="+49 170 1234567" />
+          @if (shouldShowFieldError('phone')) {
+            <span class="field-error">Enter a valid German phone number.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Email address</span>
+          <input type="email" formControlName="email" autocomplete="email" placeholder="name@example.com" />
+          @if (shouldShowFieldError('email')) {
+            <span class="field-error">Enter a valid email address.</span>
+          }
+        </label>
+
+        <label class="field field--span-2">
+          <span class="field__label">Street</span>
+          <input type="text" formControlName="street" autocomplete="address-line1" />
+          @if (shouldShowFieldError('street')) {
+            <span class="field-error">Street is required.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">House number</span>
+          <input type="text" formControlName="houseNumber" autocomplete="address-line2" />
+          @if (shouldShowFieldError('houseNumber')) {
+            <span class="field-error">House number is required.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Postal code</span>
+          <input type="text" formControlName="postalCode" autocomplete="postal-code" inputmode="numeric" />
+          @if (shouldShowFieldError('postalCode')) {
+            <span class="field-error">Enter a valid 5-digit German postal code.</span>
+          }
+        </label>
+
+        <label class="field field--span-2">
+          <span class="field__label">City</span>
+          <input type="text" formControlName="city" autocomplete="address-level2" />
+          @if (shouldShowFieldError('city')) {
+            <span class="field-error">City is required.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Pickup date</span>
+          <input type="date" formControlName="pickupDate" [min]="minimumPickupDate" />
+          @if (shouldShowFieldError('pickupDate')) {
+            <span class="field-error">Pickup date is required and cannot be in the past.</span>
+          }
+        </label>
+
+        <label class="field field--span-2">
+          <span class="field__label">Notes</span>
+          <textarea formControlName="notes" rows="4" placeholder="Optional garment or pickup notes"></textarea>
+          @if (shouldShowFieldError('notes')) {
+            <span class="field-error">Notes may not exceed 500 characters.</span>
+          }
+        </label>
+      </div>
+    </section>
+
+    <aside class="panel panel--summary" aria-labelledby="summary-heading">
+      <div class="section-heading">
+        <p class="section-heading__eyebrow">Step 3</p>
+        <h2 id="summary-heading">Review and submit</h2>
+      </div>
+
+      <div class="summary-list">
+        @if (selectedItems.length > 0) {
+          @for (item of selectedItems; track item.id) {
+            <div class="summary-row">
+              <div>
+                <strong>{{ item.name }}</strong>
+                <p>{{ item.quantity }} x {{ item.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</p>
+              </div>
+              <span>{{ item.lineTotal | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </div>
+          }
+        } @else {
+          <p class="summary-empty">No items selected yet.</p>
+        }
+      </div>
+
+      <div class="summary-total">
+        <span>Total</span>
+        <strong>{{ totalPrice | currency: 'EUR' : 'symbol' : '1.2-2' }}</strong>
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" formControlName="privacyAccepted" />
+        <span>I agree to the privacy policy and the processing of my order request.</span>
+      </label>
+
+      @if (shouldShowFieldError('privacyAccepted')) {
+        <p class="field-error">Privacy consent is required before submitting the request.</p>
+      }
+
+      <button class="submit-button" type="submit">Submit pickup request</button>
+
+      @if (successMessage) {
+        <p class="success-message">{{ successMessage }}</p>
+      }
+    </aside>
+  </form>
 </main>

@@ -26,16 +26,16 @@ The intended MVP covers:
 | Angular application scaffold | Done | Standalone Angular application with routing bootstrap |
 | Strict TypeScript configuration | Done | Strict compiler settings enabled |
 | Feature-based frontend structure | Done | `core`, `shared`, and `features` areas prepared for scale |
-| Public order entry page | Done | Business-oriented placeholder screen for the public flow |
+| Public order form MVP | Done | Reactive Forms-based order page with live totals and customer inputs |
+| Client-side validation | Done | Required fields, German phone pattern, postal code, pickup date, privacy consent |
+| Mobile-first responsive layout | Done | Layout designed to remain usable down to 320px width |
 | Starter test setup | Done | Jasmine/Karma test entry for the root component |
 
 ### Planned
 
 | Feature | Status | Notes |
 |---|---|---|
-| Public order form | Planned | Article selection, quantity input, customer details |
-| Live price calculation | Planned | Client-side calculation with validated pricing data |
-| Form validation | Planned | Client-side and server-side validation |
+| Server-side order validation | Planned | Mirror client validation rules at the API boundary |
 | Backend API | Planned | Node.js + Express + TypeScript |
 | PostgreSQL database | Planned | Prisma-based schema and migrations |
 | Admin area foundation | Planned | Architecture prepared, not yet implemented |
@@ -82,6 +82,10 @@ PicobelloGo/
 │   │   ├── features/
 │   │   │   ├── admin/
 │   │   │   └── public-order/
+│   │   │       ├── data/
+│   │   │       ├── models/
+│   │   │       ├── pages/
+│   │   │       └── validators/
 │   │   ├── shared/
 │   │   ├── app.component.spec.ts
 │   │   ├── app.component.ts
@@ -114,7 +118,7 @@ npm install
 
 ## Environment Variables
 
-No environment variables are required for the current frontend scaffold.
+No environment variables are required for the current frontend-only MVP scaffold.
 
 For the planned full-stack setup, environment variables should be introduced through environment-specific files or container configuration. Expected examples:
 
@@ -200,7 +204,7 @@ Once implemented, this section should document:
 
 ## Development Workflow
 
-The current workflow is frontend-first, with the repository serving as the initial application shell.
+The current workflow is frontend-first, with the repository now containing the first working MVP form flow.
 
 Recommended workflow:
 
@@ -259,6 +263,7 @@ Before production rollout, the project should include:
 
 - Strict TypeScript configuration
 - `OnPush` change detection on the feature entry component
+- Typed Reactive Forms with explicit validation rules
 - Dependency separation between runtime and development tooling
 - Project foundation ready for controlled environment-based configuration
 
@@ -289,6 +294,16 @@ Planned MVP validation examples:
 | Pickup date | Must not be in the past |
 | Privacy consent | Required |
 
+Current frontend validation already covers:
+
+- required first and last name with minimum length
+- German phone number pattern validation
+- email validation
+- 5-digit postal code validation
+- pickup date not in the past
+- privacy consent requirement
+- at least one selected service item
+
 Implementation direction:
 
 - Angular form validation in the frontend
@@ -316,7 +331,7 @@ This section should be expanded once the backend contract is introduced.
 |---|---|
 | `src/app/core` | Reserved location for singleton services, global infrastructure, and cross-cutting concerns |
 | `src/app/shared` | Reserved location for reusable UI and shared utilities |
-| `src/app/features/public-order` | Public customer-facing order flow |
+| `src/app/features/public-order` | Public customer-facing order flow including price list, validators, and MVP page |
 | `src/app/features/admin` | Admin domain placeholder for future implementation |
 | `src` | Angular entry files, global styles, and static app shell |
 | `public` | Public static assets |
@@ -345,7 +360,7 @@ docker/
 
 ## Future Improvements
 
-- Expand the public order feature into a full reactive form workflow
+- Connect the public order feature to a real backend persistence layer
 - Add backend API and Prisma schema
 - Introduce database migrations and seed data
 - Prepare admin architecture without exposing unfinished UI
@@ -363,6 +378,7 @@ Key decisions so far:
 - Strict TypeScript settings improve long-term maintainability
 - Routing is initialized early to support modular growth
 - The frontend is split by responsibility so feature logic can grow without turning `app/` into a flat file dump
+- The first business flow is implemented with typed Reactive Forms so validation and API integration can evolve without refactoring the page architecture
 - The structure leaves room for a future backend and admin domain without locking the project into accidental complexity
 
 ## License
