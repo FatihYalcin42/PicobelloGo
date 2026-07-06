@@ -14,6 +14,10 @@
       <p class="status-card__label">Current step</p>
       <h2>Public MVP order flow</h2>
       <p>Reactive Forms, client-side validation, responsive layout, and live order totals are now prepared.</p>
+      <p class="status-card__api">
+        API status:
+        <strong>{{ apiConnected ? 'connected' : 'placeholder only' }}</strong>
+      </p>
     </aside>
   </section>
 
@@ -180,11 +184,32 @@
         <p class="field-error">Privacy consent is required before submitting the request.</p>
       }
 
-      <button class="submit-button" type="submit">Submit pickup request</button>
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Preparing request...' : 'Submit pickup request' }}
+      </button>
 
       @if (successMessage) {
         <p class="success-message">{{ successMessage }}</p>
       }
     </aside>
   </form>
+
+  <section class="panel panel--placeholders" aria-labelledby="placeholder-heading">
+    <div class="section-heading">
+      <p class="section-heading__eyebrow">Next step prepared</p>
+      <h2 id="placeholder-heading">Backend integration placeholders</h2>
+    </div>
+
+    <div class="placeholder-grid">
+      @for (item of integrationPlaceholders; track trackByPlaceholderId($index, item)) {
+        <article class="placeholder-card">
+          <div class="placeholder-card__header">
+            <h3>{{ item.title }}</h3>
+            <span>{{ item.statusLabel }}</span>
+          </div>
+          <p>{{ item.description }}</p>
+        </article>
+      }
+    </div>
+  </section>
 </main>

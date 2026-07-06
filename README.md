@@ -29,6 +29,8 @@ The intended MVP covers:
 | Public order form MVP | Done | Reactive Forms-based order page with live totals and customer inputs |
 | Client-side validation | Done | Required fields, German phone pattern, postal code, pickup date, privacy consent |
 | Mobile-first responsive layout | Done | Layout designed to remain usable down to 320px width |
+| API placeholder layer | Done | Submission service, payload contract, and visible integration placeholders |
+| Git-safe local config baseline | Done | `.env.example` documented and real `.env` files ignored |
 | Starter test setup | Done | Jasmine/Karma test entry for the root component |
 
 ### Planned
@@ -79,12 +81,14 @@ PicobelloGo/
 ├── src/
 │   ├── app/
 │   │   ├── core/
+│   │   │   └── config/
 │   │   ├── features/
 │   │   │   ├── admin/
 │   │   │   └── public-order/
 │   │   │       ├── data/
 │   │   │       ├── models/
 │   │   │       ├── pages/
+│   │   │       ├── services/
 │   │   │       └── validators/
 │   │   ├── shared/
 │   │   ├── app.component.spec.ts
@@ -137,6 +141,7 @@ Security note:
 - Never commit secrets to the repository
 - Store production secrets in a secure secret management or deployment environment
 - Use separate values for local, staging, and production environments
+- Use `.env.example` only as a template and keep real `.env` files local
 
 ## Running the Project
 
@@ -212,7 +217,8 @@ Recommended workflow:
 2. Start the Angular development server with `npm start`
 3. Build features in small, isolated increments
 4. Keep business logic typed, documented, and validation-focused
-5. Update this README whenever architecture or setup changes
+5. Add placeholders instead of fake live integrations when APIs are not available yet
+6. Update this README whenever architecture or setup changes
 
 Engineering principles for this project:
 
@@ -264,6 +270,7 @@ Before production rollout, the project should include:
 - Strict TypeScript configuration
 - `OnPush` change detection on the feature entry component
 - Typed Reactive Forms with explicit validation rules
+- Placeholder-based integration boundary to avoid leaking unfinished API details into the UI
 - Dependency separation between runtime and development tooling
 - Project foundation ready for controlled environment-based configuration
 
@@ -330,8 +337,10 @@ This section should be expanded once the backend contract is introduced.
 | Path | Purpose |
 |---|---|
 | `src/app/core` | Reserved location for singleton services, global infrastructure, and cross-cutting concerns |
+| `src/app/core/config` | Frontend-safe placeholder runtime configuration |
 | `src/app/shared` | Reserved location for reusable UI and shared utilities |
 | `src/app/features/public-order` | Public customer-facing order flow including price list, validators, and MVP page |
+| `src/app/features/public-order/services` | API-facing abstraction layer with safe placeholder submission behavior |
 | `src/app/features/admin` | Admin domain placeholder for future implementation |
 | `src` | Angular entry files, global styles, and static app shell |
 | `public` | Public static assets |

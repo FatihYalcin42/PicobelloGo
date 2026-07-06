@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -8,8 +8,13 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { appEnvironment } from '../../../core/config/app-environment';
+import { INTEGRATION_PLACEHOLDERS } from '../data/integration-placeholders';
+import { IntegrationPlaceholder } from '../models/integration-placeholder.model';
+import { OrderRequest } from '../models/order-request.model';
 import { SERVICE_ITEMS } from '../data/service-items';
 import { ServiceItem } from '../models/service-item.model';
+import { OrderSubmissionService } from '../services/order-submission.service';
 import { atLeastOneQuantityValidator } from '../validators/at-least-one-quantity.validator';
 import { notInPastDateValidator } from '../validators/not-in-past-date.validator';
 
@@ -47,12 +52,17 @@ type OrderFieldName = Exclude<keyof OrderFormGroup['controls'], 'items'>;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderPageComponent {
+  private readonly orderSubmissionService = inject(OrderSubmissionService);
+
+  protected readonly apiConnected = appEnvironment.features.persistOrders;
+  protected readonly integrationPlaceholders = INTEGRATION_PLACEHOLDERS;
   protected readonly serviceItems = SERVICE_ITEMS;
   protected readonly minimumPickupDate = this.getMinimumPickupDate();
 
   protected readonly orderForm: OrderFormGroup;
 
   protected submitAttempted = false;
+  protected isSubmitting = false;
   protected successMessage = '';
 
   public constructor(private readonly formBuilder: NonNullableFormBuilder) {
@@ -138,7 +148,7 @@ export class OrderPageComponent {
   /**
    * Submits the current form state once all client-side validation rules pass.
    */
-  protected submitOrder(): void {
+  protected async submitOrder(): Promise<void> {
     this.submitAttempted = true;
     this.successMessage = '';
 
@@ -147,8 +157,15 @@ export class OrderPageComponent {
       return;
     }
 
-    this.successMessage =
-      'Order request captured locally. Backend persistence and operator notification will be connected in the next implementation step.';
+    this.isSubmitting = true;
+
+    try {
+      const payload = this.buildOrderRequest();
+      const result = await this.orderSubmissionService.submitOrder(payload);
+      this.successMessage = result.message;
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   /**
@@ -181,6 +198,17 @@ export class OrderPageComponent {
   }
 
   /**
+   * Tracks integration placeholder rows by stable id.
+   *
+   * @param _index Position in the placeholder list.
+   * @param item Current integration placeholder item.
+   * @returns Stable tracking key.
+   */
+  protected trackByPlaceholderId(_index: number, item: IntegrationPlaceholder): string {
+    return item.id;
+  }
+
+  /**
    * Tracks item rows by stable item id.
    *
    * @param index Position inside the form array.
@@ -201,5 +229,36 @@ export class OrderPageComponent {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Maps the validated form state to the future API payload contract.
+   *
+   * @returns Order request payload prepared for backend submission.
+   */
+  private buildOrderRequest(): OrderRequest {
+    const formValue = this.orderForm.getRawValue();
+
+    return {
+      items: formValue.items
+        .filter((item) => item.quantity > 0)
+        .map((item) => ({
+          serviceItemId: item.serviceItemId,
+          quantity: item.quantity
+        })),
+      customer: {
+        firstName: formValue.firstName.trim(),
+        lastName: formValue.lastName.trim(),
+        phone: formValue.phone.trim(),
+        email: formValue.email.trim(),
+        street: formValue.street.trim(),
+        houseNumber: formValue.houseNumber.trim(),
+        postalCode: formValue.postalCode.trim(),
+        city: formValue.city.trim()
+      },
+      pickupDate: formValue.pickupDate,
+      notes: formValue.notes.trim(),
+      privacyAccepted: formValue.privacyAccepted
+    };
   }
 }
