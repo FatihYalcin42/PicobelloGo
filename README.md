@@ -1,7 +1,7 @@
 # PicobelloGo
 
 Professional project foundation for a production-oriented textile cleaning web application.  
-The current repository contains the initial Angular frontend scaffold and is structured to support a secure full-stack expansion.
+The current repository contains the first structured Angular frontend setup and is organized to support a secure full-stack expansion.
 
 ## Project Overview
 
@@ -25,7 +25,8 @@ The intended MVP covers:
 |---|---|---|
 | Angular application scaffold | Done | Standalone Angular application with routing bootstrap |
 | Strict TypeScript configuration | Done | Strict compiler settings enabled |
-| Base project structure | Done | Organized `src/`, config files, and starter component |
+| Feature-based frontend structure | Done | `core`, `shared`, and `features` areas prepared for scale |
+| Public order entry page | Done | Business-oriented placeholder screen for the public flow |
 | Starter test setup | Done | Jasmine/Karma test entry for the root component |
 
 ### Planned
@@ -49,6 +50,7 @@ The intended MVP covers:
 |---|---|
 | Frontend | Angular |
 | Language | TypeScript |
+| Styling | SCSS |
 | Routing | Angular Router |
 | Testing | Jasmine, Karma |
 | Package Management | npm |
@@ -76,8 +78,11 @@ PicobelloGo/
 ├── public/
 ├── src/
 │   ├── app/
-│   │   ├── app.component.css
-│   │   ├── app.component.html
+│   │   ├── core/
+│   │   ├── features/
+│   │   │   ├── admin/
+│   │   │   └── public-order/
+│   │   ├── shared/
 │   │   ├── app.component.spec.ts
 │   │   ├── app.component.ts
 │   │   ├── app.config.ts
@@ -85,7 +90,7 @@ PicobelloGo/
 │   ├── favicon.ico
 │   ├── index.html
 │   ├── main.ts
-│   └── styles.css
+│   └── styles.scss
 ├── tsconfig.app.json
 ├── tsconfig.json
 └── tsconfig.spec.json
@@ -202,7 +207,7 @@ Recommended workflow:
 1. Install dependencies with `npm install`
 2. Start the Angular development server with `npm start`
 3. Build features in small, isolated increments
-4. Keep business logic typed and validation-focused
+4. Keep business logic typed, documented, and validation-focused
 5. Update this README whenever architecture or setup changes
 
 Engineering principles for this project:
@@ -253,6 +258,7 @@ Before production rollout, the project should include:
 ### Current
 
 - Strict TypeScript configuration
+- `OnPush` change detection on the feature entry component
 - Dependency separation between runtime and development tooling
 - Project foundation ready for controlled environment-based configuration
 
@@ -308,8 +314,11 @@ This section should be expanded once the backend contract is introduced.
 
 | Path | Purpose |
 |---|---|
-| `src/app` | Root application logic, component, app config, routes |
-| `src` | Angular entry files, global styles, static app shell |
+| `src/app/core` | Reserved location for singleton services, global infrastructure, and cross-cutting concerns |
+| `src/app/shared` | Reserved location for reusable UI and shared utilities |
+| `src/app/features/public-order` | Public customer-facing order flow |
+| `src/app/features/admin` | Admin domain placeholder for future implementation |
+| `src` | Angular entry files, global styles, and static app shell |
 | `public` | Public static assets |
 
 ### Planned Expansion
@@ -336,9 +345,7 @@ docker/
 
 ## Future Improvements
 
-- Replace starter CSS with the final green-and-white brand system
-- Introduce SCSS and a scalable design token structure
-- Add reactive order form flow
+- Expand the public order feature into a full reactive form workflow
 - Add backend API and Prisma schema
 - Introduce database migrations and seed data
 - Prepare admin architecture without exposing unfinished UI
@@ -355,6 +362,7 @@ Key decisions so far:
 - Standalone Angular bootstrap keeps the frontend lean and modern
 - Strict TypeScript settings improve long-term maintainability
 - Routing is initialized early to support modular growth
+- The frontend is split by responsibility so feature logic can grow without turning `app/` into a flat file dump
 - The structure leaves room for a future backend and admin domain without locking the project into accidental complexity
 
 ## License

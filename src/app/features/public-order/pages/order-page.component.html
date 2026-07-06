@@ -1,0 +1,27 @@
+<main class="order-page">
+  <section class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">PicobelloGo</p>
+      <h1 class="hero__title">Professional order intake for a modern textile cleaning service.</h1>
+      <p class="hero__description">
+        The project foundation is ready for the public order flow, including routing,
+        feature-based structure, and a secure path toward full-stack expansion.
+      </p>
+
+      <ul class="hero__highlights" aria-label="Project highlights">
+        @for (highlight of highlights; track highlight) {
+          <li>{{ highlight }}</li>
+        }
+      </ul>
+    </div>
+
+    <aside class="status-card" aria-label="Current delivery scope">
+      <p class="status-card__label">Current step</p>
+      <h2>Frontend architecture setup</h2>
+      <p>
+        The MVP domains are prepared without prematurely implementing backend,
+        database, or admin functionality.
+      </p>
+    </aside>
+  </section>
+</main>

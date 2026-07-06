@@ -1,0 +1,45 @@
+:root {
+  color-scheme: light;
+  --color-primary: #166534;
+  --color-primary-strong: #14532d;
+  --color-primary-soft: #dcfce7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6f7f4;
+  --color-border: #dfe5dc;
+  --color-text: #17201a;
+  --color-text-muted: #526055;
+  --shadow-soft: 0 18px 45px rgba(20, 83, 45, 0.08);
+  font-family: Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(220, 252, 231, 0.95), transparent 38%),
+    linear-gradient(180deg, #fbfcfa 0%, #f3f6f1 100%);
+  color: var(--color-text);
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
