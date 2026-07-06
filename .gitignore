@@ -1,0 +1,29 @@
+# Dependencies
+/node_modules
+
+# Build output
+/dist
+/tmp
+/out-tsc
+
+# IDE files
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# VS Code files
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/launch.json
+!/.vscode/tasks.json
+
+# Misc
+/.angular
+npm-debug.log
+yarn-error.log
+testem.log
+/coverage
